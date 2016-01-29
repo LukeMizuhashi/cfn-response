@@ -10,15 +10,19 @@ exports.FAILED = "FAILED";
  
 exports.send = function(event, context, responseStatus, responseData, physicalResourceId) {
  
-    var responseBody = JSON.stringify({
+    var jsonBody = {
         Status: responseStatus,
         Reason: "See the details in CloudWatch Log Stream: " + context.logStreamName,
-        PhysicalResourceId: physicalResourceId || context.logStreamName,
         StackId: event.StackId,
         RequestId: event.RequestId,
         LogicalResourceId: event.LogicalResourceId,
         Data: responseData
-    });
+    };
+    if (!(event.RequestType === 'Create' && responseStatus === exports.FAILED)) {
+      jsonBody.PhysicalResourceId = physicalResourceId || context.logStreamName;
+    }
+
+    var responseBody = JSON.stringify(jsonBody);
  
     console.log("Response body:\n", responseBody);
  
