@@ -24,13 +24,13 @@ exports.send = function(event, context, responseStatus, responseData, physicalRe
     console.log("Response body:\n", responseBody);
 
     var https = require("https");
-    var url = require("url");
+    var { URL } = require("url");
 
-    var parsedUrl = url.parse(event.ResponseURL);
+    var parsedUrl = new URL(event.ResponseURL);
     var options = {
         hostname: parsedUrl.hostname,
         port: 443,
-        path: parsedUrl.path,
+        path: parsedUrl.pathname + parsedUrl.search,
         method: "PUT",
         headers: {
             "content-type": "",
